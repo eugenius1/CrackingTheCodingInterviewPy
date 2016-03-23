@@ -44,7 +44,7 @@ class Stack(object):
 		try:
 			to_pop = self._list.pop()
 		except IndexError:
-			raise LookupError('pop from empty stack')
+			raise LookupError('pop from an empty stack')
 
 		# data to be popped is min
 		if to_pop == self._min:
@@ -66,7 +66,7 @@ class Stack(object):
 		try:
 			return self._list[-1]
 		except IndexError:
-			raise LookupError('peek from empty stack')
+			raise LookupError('peek from an empty stack')
 	
 	def min(self):
 		return self._min
