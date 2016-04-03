@@ -33,13 +33,40 @@ class BTreeNode(object):
 		rightHeight = self._height(subtree.right)
 		return 1 + max(leftHeight, rightHeight)
 
-	def printNode(self):
-		print self.data
+	def printNode(self, mode=0):
+		if mode == 0:
+			print self.data
+		else:
+			print self.data,
 
 	def printTree(self):
-		printTree(self.left)
+		if self.left != None:
+			self.left.printTree()
 		self.printNode()
-		printTree(self.right)
+		if self.right != None:
+			self.right.printTree()
+
+	def printTreeLayers(self):
+		self.printNode(mode=1)
+		
+		if self.left == None:
+			printLeft = False
+		else:
+			printLeft = True
+		if self.right == None:
+			printRight = False
+		else:
+			printRight = True
+
+		if printLeft:
+			self.left.printNode()
+		if printRight:
+			self.right.printNode()
+
+		if printLeft:
+			self.left.printTreeLayers()
+		if printRight:
+			self.right.printTreeLayers()
 
 ## Testing
 def testOutput(observed, expected=None):
@@ -51,12 +78,13 @@ def testOutput(observed, expected=None):
 t = BTreeNode(0)
 testOutput(t.isBalanced(), True)
 
-testData = [1, 2, -1, 0.5]
-expecting = [True,False,True,True,True]
+testInput = [1, 2, -1, 0.5]
+expectedBal = [True,False,True,True,True]
 
-for testDatum, expectedResult in zip(testData, expecting):
+
+for testDatum, expectedResult in zip(testInput, expectedBal):
 	t.insert(testDatum)
-	testOutput(t.isBalanced(), expectedResult)
+	#testOutput(t.isBalanced(), expectedResult)
 
 
 # 4.9
@@ -64,19 +92,31 @@ for testDatum, expectedResult in zip(testData, expecting):
 
 def findPathsWithSum(tree, value):
 	if tree == None:
-		return [] #########
+		return [[]] # no paths
 
 	if tree.data == value:
-		return [tree.data]
+		return [[tree.data]] # one path
 	
-	lSolutions = findPathsWithSum(tree.left, value)
-	if lSolutions:
-		lSolutions = [tree.data] + lSolutions
+	# Left subtree
+	# paths including current node
+	lSolutions = findPathsWithSum(tree.left, value-tree.data)
+	if lSolutions != [[]]: # if not no paths
+		for path in lSolutions:
+			# prepend current node to all sub paths
+			path.insert(0, tree.data)
 	
-	rSolutions = findPathsWithSum(tree.right, value)
-	if rSolutions:
-		rSolutions = [tree.data] + rSolutions
+	# paths that start later on
+	lSolutions += findPathsWithSum(tree.left, value)
 	
-	return lSolutions + rSolutions
+	# Right subtree
+	rSolutions = findPathsWithSum(tree.right, value-tree.data)
+	if rSolutions != [[]]:
+		for path in rSolutions:
+			# prepend current node to all sub paths
+			path.insert(0, tree.data)
+	rSolutions += findPathsWithSum(tree.right, value)
+	
+	return filter(bool, lSolutions + rSolutions) # remove empty paths
 
+t.printTree()
 print findPathsWithSum(t, 1.5)
