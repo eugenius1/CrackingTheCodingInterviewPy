@@ -90,9 +90,9 @@ for testDatum, expectedResult in zip(testInput, expectedBal):
 # 4.9
 # All paths in a binary tree that sum to a value
 
-def findPathsWithSum(tree, value):
+def findPathsWithSum(tree, value, curr_solutions=[]):
 	if tree == None:
-		return [[]] # no paths
+		return [] # no paths
 
 	if tree.data == value:
 		return [[tree.data]] # one path
@@ -100,23 +100,25 @@ def findPathsWithSum(tree, value):
 	# Left subtree
 	# paths including current node
 	lSolutions = findPathsWithSum(tree.left, value-tree.data)
-	if lSolutions != [[]]: # if not no paths
-		for path in lSolutions:
-			# prepend current node to all sub paths
-			path.insert(0, tree.data)
+	for path in lSolutions:
+		# prepend current node to all sub paths
+		path.insert(0, tree.data)
 	
 	# paths that start later on
 	lSolutions += findPathsWithSum(tree.left, value)
 	
 	# Right subtree
 	rSolutions = findPathsWithSum(tree.right, value-tree.data)
-	if rSolutions != [[]]:
-		for path in rSolutions:
-			# prepend current node to all sub paths
-			path.insert(0, tree.data)
+	for path in rSolutions:
+		# prepend current node to all sub paths
+		path.insert(0, tree.data)
 	rSolutions += findPathsWithSum(tree.right, value)
 	
-	return filter(bool, lSolutions + rSolutions) # remove empty paths
+	return (lSolutions + rSolutions) # remove empty paths
+	#return filter(bool, lSolutions + rSolutions) # remove empty paths
 
-t.printTree()
-print findPathsWithSum(t, 1.5)
+#t.printTree()
+
+testSums = [0, -1, 1.5, 3]
+for testSum in testSums:
+	print findPathsWithSum(t, testSum)
