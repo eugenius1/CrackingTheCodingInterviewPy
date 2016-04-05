@@ -36,6 +36,7 @@ class BSTreeNode(object):
 	def _height(self, subtree):
 		"""Returns the height of a subtree.
 		Empty tree has a height of 0. Leaf nodes are at a height of 1."""
+
 		if subtree == None:
 			return 0
 		leftHeight = self._height(subtree.left)
@@ -45,6 +46,7 @@ class BSTreeNode(object):
 	def printNode(self, mode=0):
 		"""Print node data followed by a new line (default mode 0).
 		Mode 1 does not print a new line"""
+
 		if mode == 0:
 			print self.data
 		else:
@@ -89,24 +91,27 @@ class BSTreeNode(object):
 
 		Path does not have to start at root node or end at a leaf node,
 		but has to be a single continous sequence of nodes.
+		
+		forceRoot determines whether or not all the returned solution paths must
+		include the root node, self.
 		"""
 
 		if self.data == value:
-			return [[self.data]] # one path
+			return [[self.data]]
 		
 		# Left subtree
 		if self.left == None: 
 			lSolutions = []
 		else:
-			# paths including current node
+			# solution paths including current node
 			lSolutions = self.left.findPathsWithSum(value-self.data, forceRoot=True)
 		
 			for path in lSolutions:
-				# prepend current node to all sub paths
+				# prepend current node to all solution sub-paths
 				path.insert(0, self.data)
 		
 			if not forceRoot:
-				# paths that start later on
+				# solution paths that start later on
 				lSolutions += self.left.findPathsWithSum(value)
 		
 		# Right subtree
@@ -116,17 +121,15 @@ class BSTreeNode(object):
 			rSolutions = self.right.findPathsWithSum(value-self.data, forceRoot=True)
 		
 			for path in rSolutions:
-				# prepend current node to all sub paths
 				path.insert(0, self.data)
 		
 			if not forceRoot:
 				rSolutions += self.right.findPathsWithSum(value)
 		
-		return (lSolutions + rSolutions) # remove empty paths
-		#return filter(bool, lSolutions + rSolutions) # remove empty paths
+		return (lSolutions + rSolutions)
 
 
-## Testing
+#### Testing
 def testOutput(observed, expected=None, printPasses=True):
 	if isinstance(observed, type(expected)) and observed == expected:
 		if printPasses:
@@ -150,12 +153,14 @@ for testDatum, expectedResult in zip(testInput, expectedBal):
 
 def findPathsWithSum2(tree, value, currSolutions=[]):
 	"""4.9 alternative solution
-	Return all paths in a binary (search) tree that sum to a value"""
+	Return all paths in a binary (search) tree that sum to a value
+
+	This recursive implementation need passing in the current candidate subpaths."""
 
 	def appendCurrNode(solution):
 		"""Return new list with current node appended to given solution path"""
 
-		s=solution[:]       # a copy of the list
+		s = solution[:]       # a copy of the list
 		s.append(tree.data)
 		return s
 
@@ -163,30 +168,29 @@ def findPathsWithSum2(tree, value, currSolutions=[]):
 		return []
 
 	extendSolutions = currSolutions[:]
-	if currSolutions: # if not empty list
+	if currSolutions: # if not an empty list
 		extendSolutions = map(appendCurrNode, currSolutions)
 	else:
 		extendSolutions = [[tree.data]]
-	###print "extendS", extendSolutions
 
 	if tree.data == value:
 		return extendSolutions
 	
 	# Left subtree
-	# paths including current node
+	# solution paths including current node
 	lSolutions = findPathsWithSum2(tree.left, value-tree.data, extendSolutions)
 	
 	if not currSolutions:
-		# paths that start later on
+		# solution paths that start later on
 		lSolutions += findPathsWithSum2(tree.left, value, [])
 	
-	# Right subtree
+	# Repeat for right subtree
 	rSolutions = findPathsWithSum2(tree.right, value-tree.data, extendSolutions)
 	
 	if not currSolutions:
 		rSolutions += findPathsWithSum2(tree.right, value, [])
 	
-	return (lSolutions + rSolutions) # remove empty paths
+	return (lSolutions + rSolutions)
 
 t.printTreeLayers()
 
