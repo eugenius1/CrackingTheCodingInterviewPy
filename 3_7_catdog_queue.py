@@ -40,13 +40,13 @@ class Animal(object):
 
 
 class Dog(Animal):
-	def __init__(self, name = None, ID = None):
-		super(Dog, self).__init__(name, ID)
+	def __init__(self, *args, **kwargs):
+		super(Dog, self).__init__(*args, **kwargs)
 
 
 class Cat(Animal):
-	def __init__(self, name = None, ID = None):
-		super(Cat, self).__init__(name, ID)
+	def __init__(self, *args, **kwargs):
+		super(Cat, self).__init__(*args, **kwargs)
 
 
 class Queue(object):
